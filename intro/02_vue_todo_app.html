@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .transparent {
+      display: none;
+    }
+  </style>
+</head>
+<body style="margin: 0">
+  <div id="app" v-bind:style="{backgroundImage: 'url(' + bgImg +')', height: '100vh', backgroundPosition: 'center', backgroundSize: 'cover'}">
+    <!-- <img v-bind:src="bgImg" alt=""> -->
+    <!-- <div v-bind:style="{color: color, fontSize: fontSize + 'px'}">
+      Todo
+    </div> -->
+    <div>
+      <!-- <button v-on:click="home()">홈</button>
+      <button v-on:click="done()">완료</button>
+      <button v-on:click="will()">예정</button> -->
+    </div>
+    <select name="" id="" v-model="status">
+      <option value="all">모든항목</option>
+      <option value="active">미완항목</option>
+      <option value="completed">완료항목</option>
+    </select>
+    <input type="text" v-model="newTodo" @keyup.enter="addTodo()">
+    <button @click="addTodo()">+</button>
+    <button v-on:click="clearComplited()">완료항목삭제</button>
+    <!-- <li v-for="todo in todos" v-bind:class="{completed: todo.completed, transparent: find(todo)}"> -->
+    <li v-for="todo in computedTodosBystatus" :class="{completed: todo.completed}" v-bind:key="todo.id">
+      <input type="checkbox" v-model="todo.completed">
+      {{todo.title}}
+    </li>
+    <!-- <p>{{dateMethod()}}</p>
+    <p>{{dateComputed}}</p> -->
+    <!-- <p>{{reverseNewTodo}}</p> -->
+    <span>{{status}}</span>
+    <span v-text="status"></span>
+    <span v-html="tag"></span>
+    <span v-if="false">안녕하세요</span>
+    <span v-show="false">안녕하세요</span>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    const STORAGE_KEY = 'vue-todo'
+    const todoStorage = {
+      save: function(todos){
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
+      },
+      fetch: function(){
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+      }
+    }
+    const app = new Vue({
+      el: '#app',
+      data: {
+        //color: 'red',
+        //fontSize: 30,
+        newTodo: '',
+        todos: [],
+        //state: "every",
+        status: "all",
+        bgImg: '',
+        tag: '<h1>안녕하세요</h1>'
+      },
+      methods: {
+        check(todo){
+          todo.completed = !todo.completed
+        },
+        addTodo(){
+          if (this.newTodo.length > 0){
+            this.todos.push({
+              id: Date.now(),
+              title: this.newTodo,
+              completed: false,
+            })
+          }
+          this.newTodo = ''
+        },
+        clearComplited(){
+          const notCompltedTodos = this.todos.filter(todo=>{
+            return todo.completed === false
+          })
+          this.todos = notCompltedTodos
+          this.temp = notCompltedTodos
+        },
+        todosBystatus: function(){
+          let statusTodos = []
+          if(this.status === "completed"){
+            // 완료된 항목들만 출력
+            statusTodos = this.todos.filter((todo)=>{
+              return todo.completed === true
+            })
+          }
+          else if (this.status === "active"){
+            // 미완료된 항목들만 출력
+            statusTodos = this.todos.filter((todo)=>{
+              return todo.completed === false
+            })
+          }
+          else {
+            statusTodos = this.todos
+          }
+          return statusTodos
+        },      
+        /*
+        home(){
+          this.state="every"
+        },
+        done(){
+          this.state="done"
+        },
+        will(){
+          this.state="will"
+        },
+        find(todo){
+          if (this.state=="every"){
+            return false
+          } else if (this.state=="done"){
+            return !todo.completed
+          } else{
+            return todo.completed
+          }
+        },
+        */
+        dateMethod: function(){
+          return new Date()
+        },
+      },
+      computed: {
+        dateComputed: function(){
+          return new Date()
+        },
+        //reverseNewTodo: function(){
+        //  return this.newTodo.split('').reverse().join('')
+        //}
+        computedTodosBystatus: function(){
+          let statusTodos = []
+          if(this.status === "completed"){
+            // 완료된 항목들만 출력
+            statusTodos = this.todos.filter((todo)=>{
+              return todo.completed === true
+            })
+          }
+          else if (this.status === "active"){
+            // 미완료된 항목들만 출력
+            statusTodos = this.todos.filter((todo)=>{
+              return todo.completed === false
+            })
+          }
+          else {
+            statusTodos = this.todos
+          }
+          return statusTodos
+        },
+      },
+      watch:  {
+        todos: {
+          handler: function(todos){
+            todoStorage.save(todos)
+          },
+          deep: true
+        }
+      },
+      mounted: function(){
+        this.todos = todoStorage.fetch()
+        const IMG_URL = "https://source.unsplash.com/random/1920x1080/?nature,water"
+        axios
+          .get(IMG_URL)
+          .then((response)=>{
+            console.log(response.request.responseURL)
+            this.bgImg = response.request.responseURL
+          })
+          .catch((error)=>{console.log(error)})
+      }
+    })
+  </script>
+</body>
+</html>
