@@ -4,57 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <title>todo_with_component</title>
 </head>
 <body>
   <div id="app">
     <h1>My Todo app</h1>
     <todo-list category="취업"></todo-list>
-    <todo-list cateogory"></todo-list>
-    <todo-list></todo-list>
+    <todo-list category="싸피"></todo-list>
+    <todo-list category="운동"></todo-list>
+    <todo-card v-for="title in titles" v-bind:title="title" content="반갑습니다." ></todo-card>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <script>
-    Vue.component('todo-list', {
-      template: `
-        <div class="todo-list">
-          <h1>{{category}}</h1>
-          <input type="text" v-model="newTodo" v-on:keyup.enter="addTodo">
-          <button v-on:click="addTodo">+</button>
-          <li v-for="todo in todos" v-bind:key="todo.id">
-            <span>{{ todo.content }}</span>
-            <button v-on:click="removeTodo(todo.id)">x</button>
-          </li>
-        </div>
-      `,
-      data: function(){
-        return {
-          todos: [],
-          newTodo: ''
-        }
-      },
-      methods: {
-        addTodo: function(e) {
-          if (this.newTodo.length != 0) {
-            this.todos.push({
-              id: Date.now(),
-              content: this.newTodo,
-              completed: false,
-            })
-            this.newTodo = ''
-          }
-        },
-        removeTodo: function(todoID) {
-          this.todos = this.todos.filter(todo => {
-            return todo.id !== todoID
-          })
-        }
-      },
-    })
-  </script>
+
+  <script src="./todoList.js"></script>
+  <script src="./todoCard.js"></script>
+
   <script>
     const app = new Vue({
-      el: '#app'
+      el: '#app',
+      data: {
+        titles: [
+          '안녕하세요',
+          '하이하이',
+          'Hello',
+          'vue',
+        ]
+      }
     })
   </script>
 </body>
