@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <!-- vue -->
+  <div id="app">
+    <input type="text" id="vue-input" v-model="msg">
+    <p id="vue-p">{{msg}}</p>
+    <p>길이 : {{watchMsgLength}}</p>
+    <p>길이 : {{computedMsgLength}}</p>
+  </div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    // vue
+    const app = new Vue({
+      el: '#app',
+      data: {
+        msg: '',
+        watchMsgLength: 0,
+      },
+      computed: {
+        computedMsgLength: function(){
+          return this.msg.length
+        }
+      },
+      watch: {
+        msg: function(){
+          this.watchMsgLength = this.msg.length
+        }
+      }
+    })
+
+
+    // javascript
+    const inputs = document.querySelector('#js-input')
+    inputs.addEventListener('keydown', ()=>{
+      const ps = document.querySelector('#js-p')
+      ps.innerText = inputs.value
+    })
+  </script>
+</body>
+</html>
